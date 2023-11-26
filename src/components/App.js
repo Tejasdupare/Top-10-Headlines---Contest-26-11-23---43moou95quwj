@@ -4,7 +4,26 @@ import '../styles/App.css';
 const App = () => {
   const [category, setCategory] = useState("general");
   const [newsData, setNewsData] = useState([]);
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      setLoading(true);
+      try{
+        const response = await fetch(`https://gnews.io/api/v4/top-headlines?category=${category}&apikey=e96ea3c913ea85396c202c9540f0ea16`);
+        const data = await response.json();
+        setNewsData(data.articles.slice(0, 10));
+        setLoading(false);
+      } catch  (error) {
+        console.error('Error fetching news:',error);
+        setLoading(false);
+      }
+    }
+    fetchNews();
+  },[category]);
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+  };
 
   return (
     <div id="main">
